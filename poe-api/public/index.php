@@ -34,10 +34,23 @@ require __DIR__ . '/../src/functions.php';
 // Register routes
 require __DIR__ . '/../src/routes.php';
 
+$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
+    $name = $args['name'];
+    
+    // $response->getBody()->write("Hello, $name");
+    // return $response;
+
+    $client = new MultichainClient("http://masternode:8002", 'multichainrpc', 'this-is-insecure-change-it', 3);
+    $blockchain_info = $client->setDebug(true)->getInfo();
+    return $response->withJson($blockchain_info)->withHeader('Content-Type', 'application/json');
+});
+
+
+// Connect to the Multichain and publish the data into a Stream
 $app->post('/publish/{signature}', function (Request $request, Response $response) {
     
     $signature = $request->getAttribute('signature');
-    $client = new MultichainClient("http://<MultiChain Node IP>:<RPC Port>", 'multichainrpc', '<RPC Password>', 3);
+    $client = new MultichainClient("http://masternode:8002", 'multichainrpc', 'this-is-insecure-change-it', 3);
     //$response->getBody()->write("Hello, $signature");
     $data = $request->getParsedBody();
     if(isset($data['name']))
@@ -96,7 +109,7 @@ $app->post('/publish/{signature}', function (Request $request, Response $respons
 
 $app->get('/verify/{signature}', function (Request $request, Response $response) {
     $signature = $request->getAttribute('signature');
-    $client = new MultichainClient("http://<MultiChain Node IP>:<RPC Port>", 'multichainrpc', '<RPC Password>', 3);
+    $client = new MultichainClient("http://masternode:8002", 'multichainrpc', 'this-is-insecure-change-it', 3);
     $data = $client->setDebug(true)->executeApi('liststreamkeyitems', array("poe", $signature));
     $data = array_reverse($data);
     $dataToReturn = array();
@@ -122,7 +135,7 @@ $app->get('/verify/{signature}', function (Request $request, Response $response)
 $app->get('/latest/published/{count}', function (Request $request, Response $response) {
     //$app->response->headers->set('Content-Type', 'application/json');
     $count = $request->getAttribute('count');
-    $client = new MultichainClient("http://<MultiChain Node IP>:<RPC Port>", 'multichainrpc', '<RPC Password>', 3);
+    $client = new MultichainClient("http://masternode:8002", 'multichainrpc', 'this-is-insecure-change-it', 3);
     $data = $client->setDebug(true)->executeApi('liststreamitems', array("poe"));
     $data = array_reverse($data);
     $dataToReturn = array();

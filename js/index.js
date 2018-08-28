@@ -92,9 +92,13 @@ $(document).ready(function() {
         if (obj.confirmations > 0) {
           badge = '<span class="label label-success">✔</span>';
         }
-        items.push('<tr><td>' + badge + '</td><td><a href="./details.php?signature=' + obj.signature +
+
+        if(obj.signature != null) {
+          items.push('<tr><td>' + badge + '</td><td><a href="./details.php?signature=' + obj.signature +
           '" target="_blank">' + obj.signature +
-          '</a></td><td> ' + obj.blocktime + '</td></tr>');
+          '</a></td><td> ' + obj.blocktime + '</td></tr>');  
+        }
+        
       });
 
       table.empty();
